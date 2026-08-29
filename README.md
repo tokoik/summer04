@@ -95,9 +95,9 @@
 
 ## 6. プログラムの解説
 
-### 6.1 画角からの透視投影変換行列の算出 (cameraMatrix)
+### 6.1 画角からの透視投影変換行列の算出 (matrix.cpp)
 
-```cpp
+`cpp
 void cameraMatrix(float fovy, float aspect,
   float zNear, float zFar,
   GLfloat* matrix)
@@ -114,4 +114,40 @@ void cameraMatrix(float fovy, float aspect,
     matrix[6] = matrix[7] = matrix[8] = matrix[9] =
     matrix[12] = matrix[13] = matrix[15] = 0.0f;
 }
-```
+`
+
+### 6.2 図形の描画 (display)
+
+`cpp
+/* 画面クリア */
+glClear(GL_COLOR_BUFFER_BIT);
+
+/* プログラムオブジェクトを適用する */
+glUseProgram(gl2Program);
+
+/* 投影変換行列の uniform 変数 projectionMatrix に変換行列の値を設定する */
+glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, projectionMatrix);
+
+/* 頂点バッファオブジェクトとして buffer を指定する */
+glBindBuffer(GL_ARRAY_BUFFER, buffer);
+
+/* index が 0 の attribute 変数を有効にする */
+glEnableVertexAttribArray(0);
+
+/* index が 0 の attribute 変数に頂点バッファオブジェクトの場所と書式を設定する */
+glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+/* 図形を描く */
+glDrawArrays(GL_LINE_LOOP, 0, 4);
+
+/* index が 0 の attribute 変数を無効にする */
+glDisableVertexAttribArray(0);
+
+/* 頂点バッファオブジェクトを解放する */
+glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+/* 固定機能に戻す */
+glUseProgram(0);
+
+glFlush();
+`
